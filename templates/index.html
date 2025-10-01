@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="hero">
+  <h1 class="page-title">Olá, {{ username or 'Stranger' }}!</h1>
+  <p class="sub-title">Prazer em conhecê-lo!</p>
+  <hr>
+  <form method="POST" action="{{ url_for('index') }}">
+    <div class="form-group">
+      <label for="name"><strong>What is your name?</strong></label>
+      <input id="name" name="name" class="form-control" placeholder="" value="{{ username or '' }}" />
+    </div>
+
+    <div class="form-group">
+      <label for="role"><strong>Role?:</strong></label>
+      <select id="role" name="role" class="form-control">
+        <option value="">-- selecione --</option>
+        {% for r in roles %}
+          <option value="{{ r.id }}">{{ r.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button class="btn btn-light" type="submit">Submit</button>
+  </form>
+</div>
+
+<section class="mt-5">
+  <h2>Relação de usuários cadastrados</h2>
+  <p>Quantidade: {{ users|length }}</p>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nome do usuário</th>
+        <th style="width: 220px; text-align: left;">Função</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in users %}
+        <tr>
+          <td>{{ u.name }}</td>
+          <td>{{ u.role.name if u.role else '' }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<section class="mt-5">
+  <h2>Relação de funções cadastradas</h2>
+  <p>Quantidade: {{ roles|length }}</p>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Funções</th>
+        <th>Usuários</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for role_name, users_of_role in roles_with_users %}
+        <tr>
+          <td style="vertical-align: top;">{{ role_name }}</td>
+          <td class="role-users">
+            {% if users_of_role %}
+              <ol>
+                {% for u in users_of_role %}
+                  <li>{{ u.name }}</li>
+                {% endfor %}
+              </ol>
+            {% else %}
+              (nenhum usuário)
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
